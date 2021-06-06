@@ -8,7 +8,6 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { AdminnavComponent } from './adminnav/adminnav.component';
 import { StaffnavComponent } from './staffnav/staffnav.component';
-import { request } from 'http';
 
 @NgModule({
   declarations: [
