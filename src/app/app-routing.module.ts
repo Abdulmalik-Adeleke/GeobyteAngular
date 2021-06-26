@@ -13,7 +13,7 @@ const routes: Routes = [
   {
     path: 'staff',
     component: StaffnavComponent,
-    canActivate:[AuthGuard], 
+   //canActivate:[AuthGuard], 
     data: { iamrole: 'ROLE_STAFF' },
     loadChildren: () => import('./staff/staff.module')
                         .then(m => m.StaffModule)
@@ -21,7 +21,7 @@ const routes: Routes = [
   {
     path: 'admin', 
     component: AdminnavComponent,
-    canActivate:[AuthGuard], 
+    //canActivate:[AuthGuard], 
     data: { iamrole: 'ROLE_ADMIN' },
     loadChildren: () => import('./admin/admin.module')
                         .then(m => m.AdminModule)

@@ -1,1 +1,46 @@
-<p>registration works!</p>
+<div class="container">
+    <div style="margin: 30px;">
+        <h1>Register User</h1>
+        <div style="margin: 30px;">
+            <form class="row g-3" [formGroup]="registerUser" (ngSubmit)="register()">
+                <div class="col-sm-6">
+                    <div class="input-group">
+                        <div class="input-group-text">@</div>
+                        <input type="email" class="form-control" formControlName="email" placeholder="Email">
+                    </div>
+                    <div *ngIf="email.invalid && email.touched">
+                        <div class="alert alert-danger" role="alert">
+                            Email seems to be invalid
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" formControlName="name" placeholder="FullName">
+                    <div *ngIf="name.invalid && name.touched">
+                        <div class="alert alert-danger" role="alert">
+                            Name is required
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <select id="inputRole" class="form-select" formControlName="role">
+                        <option [value]="null" disabled>Select Role...</option>
+                        <option value="ROLE_STAFF" *ngFor="let role of roles" [value]="role.id">{{role.name}}</option>
+                    </select>
+                    <div *ngIf="role.invalid && role.touched">
+                        <div class="alert alert-danger" role="alert">
+                            Select a User Role
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12" style="margin-top: 30px;">
+                    <button type="submit" class="btn btn-outline-primary">Sign Up</button>
+                </div>
+            </form>
+        </div>
+        <div class="alert alert-success alert-dismissible fade show" role="alert" *ngIf="successful">
+            <strong>{{person}} Has Been Registered Successfully!</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+</div>

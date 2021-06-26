@@ -1,0 +1,63 @@
+<div  class="container">
+    <div style="margin:30px;">
+        <h3>Submit Destinations And Register Route</h3>
+    </div>
+
+    <div class="row" style="margin:30px;">
+        <div class="col-sm-4">
+            <select name="origin" id="origin" class="form-select" (change)="originchanged($event.target.value)">
+                <option value="">Go!</option>
+                <option [value]="start" *ngFor="let start of place">
+                    {{start}}
+                </option>
+            </select>
+        </div>
+        <div class="col-sm-4">
+        </div>
+        <div class="col-sm-4">
+            <select name="end" id="end" class="form-select" (change)="destinationchanged($event.target.value)">
+                <option value="">Stop!</option>
+                <option [value]="destination" *ngFor="let destination of place">
+                    {{destination}}
+                </option>
+            </select>
+        </div>
+    </div>
+
+    <div style="margin-top: 15px;">
+        <!-- center this element -->
+        <div class="container">
+            <div class="row justify-content-md-center">
+                <div class="col-md-6 offset-md-3">
+                    <div style="margin:40px;">
+                        <h3>SELECT WAYPOINTS</h3>
+                    </div>
+                  <div class="justify-content-center">
+                    <div *ngFor="let way of place" style="margin-top:5px;">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" [value]="way"
+                                (change)="waypointselected($event)">
+                            <label class="form-check-label" for="flexSwitchCheckDefault">{{way}}</label>
+                        </div>
+                    </div>
+                  </div>
+                    <div class="justify-content-center" style="margin-top:2px;">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item" *ngFor="let orderpicked of waypointarray">
+                                    <a class="page-link">{{orderpicked.city}}</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div style="margin-top:10px;">
+                        <button type="submit" class="btn btn-outline-primary">Register</button>
+                    </div>
+                    <div class="alert alert-warning" role="alert" *ngIf="iswarning" style="margin: 10px;">
+                        {{checkboxdisplay}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
