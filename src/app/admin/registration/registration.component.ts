@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from "@angular/forms";
-import { User, Role } from "../../models/user";
+import { AdminService } from 'src/app/ApiRequest/Geobyte/admin.service';
+import { Role, User } from "../../models/user";
 
 @Component({
   selector: 'app-registration',
@@ -9,10 +10,11 @@ import { User, Role } from "../../models/user";
 })
 export class RegistrationComponent implements OnInit {
 
-  constructor(private formbuilder: FormBuilder) { }
+  constructor(private formbuilder: FormBuilder, private admin: AdminService) { }
   registerUser: FormGroup;
   successful: boolean;
   person;
+  user: User;
   roles: Role[] = [new Role('STAFF', 'STAFF'), new Role('ADMIN', 'ADMIN')];
 
 
@@ -24,7 +26,6 @@ export class RegistrationComponent implements OnInit {
     })
   }
 
- 
   get name() {
     return this.registerUser.get('name')
   }
@@ -37,14 +38,21 @@ export class RegistrationComponent implements OnInit {
     return this.registerUser.get('role')
   }
 
-  register() {
+  async register() {
     if (this.registerUser.valid) {
       //save to db
-      this.successful = true;
-      this.person = this.registerUser.get('name').value;
-     
-      //console.log(this.registerUser.value)
+      let registered: boolean = await this.admin.registerUser(this.user = {
+        name: this.registerUser.get('name').value,
+        email: this.registerUser.get('email').value,
+        role: this.registerUser.get('role').value
+      });
+
+      if (registered) {
+        this.successful = true;
+        this.registerUser.reset();
+      }
       this.registerUser.reset();
+
     }
   }
 

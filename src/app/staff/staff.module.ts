@@ -6,12 +6,14 @@ import { GoogleMapsModule } from '@angular/google-maps';
 import { StaffRoutingModule } from './staff-routing.module';
 import { NavigateroutesComponent } from './navigateroutes/navigateroutes.component';
 import { AddmoreordersComponent } from './addmoreorders/addmoreorders.component';
+import { OrdersComponent } from './orders/orders.component';
 
 
 @NgModule({
   declarations: [
     NavigateroutesComponent,
-    AddmoreordersComponent
+    AddmoreordersComponent,
+    OrdersComponent
   ],
   imports: [
     StaffRoutingModule,

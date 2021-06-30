@@ -8,14 +8,19 @@ export class AuthorizationService {
 
   constructor(private jwthelper: JwtHelperService) { }
 
-  public authorize (iamrole: string): boolean {
+  public authorize(iamrole: string): boolean {
     let jwt = JSON.parse(localStorage.getItem('access-token') || '{}');
     let iam = this.jwthelper.decodeToken(jwt);
-    let scope: string =  iam.scope;
-    if (!this.jwthelper.isTokenExpired(jwt) && scope == iamrole)
+    let scope: any = iam.scope;
+    if (!this.jwthelper.isTokenExpired(jwt) && scope.name == iamrole) {
       return true;
-    else
-     return false;
-     
+    }
+    else {
+      return false;
+    }
   }
+  // public navigatelogin(token: string): string {
+  //   let iam = this.jwthelper.decodeToken(token);
+  //   return iam.scope;
+  // }
 }

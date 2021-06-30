@@ -12,7 +12,7 @@
         <input type="range" class="form-range" min="0" max="10" step="0.3" #ref (change)="radiusmoved(ref.value)" />
         <label for="radius" class="form-label"><span>{{radius}} km</span> search</label>
         <div style="float: inline;">
-            <button type="button" class="btn btn-outline-primary"> Route me </button>
+            <button type="button" class="btn btn-outline-primary" (click)="fetchroutes()"> Route me </button>
         </div>
       </div>
       <div class="col-sm-4">
@@ -46,7 +46,7 @@
                             </div>
                 </div>
             </div>
-        <div style="float: right; padding-bottom:20px;">
+        <div style="float: right; padding-bottom:20px;" *ngIf="showbutton">
                  <button type="button" class="btn btn-outline-primary" (click)="navigatethrough()"> Continue </button>
         </div>
   

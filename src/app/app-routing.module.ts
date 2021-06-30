@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { AdminnavComponent } from './adminnav/adminnav.component';
 import { AuthGuard } from './auth/auth.guard';
 import { LoginComponent } from './login/login.component';
+import { ResetpasswordComponent } from './resetpassword/resetpassword.component';
 import { StaffnavComponent } from './staffnav/staffnav.component';
 
 const routes: Routes = [
@@ -11,9 +12,13 @@ const routes: Routes = [
     component: LoginComponent
   },
   {
+    path: 'resetpassword',
+    component: ResetpasswordComponent
+  },
+  {
     path: 'staff',
     component: StaffnavComponent,
-   //canActivate:[AuthGuard], 
+   canActivate:[AuthGuard], 
     data: { iamrole: 'ROLE_STAFF' },
     loadChildren: () => import('./staff/staff.module')
                         .then(m => m.StaffModule)
@@ -21,14 +26,14 @@ const routes: Routes = [
   {
     path: 'admin', 
     component: AdminnavComponent,
-    //canActivate:[AuthGuard], 
+    canActivate:[AuthGuard], 
     data: { iamrole: 'ROLE_ADMIN' },
     loadChildren: () => import('./admin/admin.module')
                         .then(m => m.AdminModule)
   },
   {
     path: '',
-    redirectTo: 'login',
+    redirectTo: '/login',
     pathMatch: 'prefix'
   }
 ];

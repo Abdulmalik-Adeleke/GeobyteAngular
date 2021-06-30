@@ -29,8 +29,17 @@
                         An Address is required
                     </div>
                 </div>
-                <button type="submit" class="btn btn-outline-primary">Register Hub</button>
+                <div style="margin-top: 20px;margin-bottom: 20px;">
+                    <button type="submit" class="btn btn-outline-primary">Register Hub</button>
+                </div>
+               
             </form>
+
+            <div *ngIf="issuccess">
+                <div class="alert alert-danger" role="alert">
+                   {{success}}
+                </div>
+            </div>
         </div>
     </div>
 </div>

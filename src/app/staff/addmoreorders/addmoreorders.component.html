@@ -1,66 +1,71 @@
-<div class="container">
-    <div class="row container" style="margin-top:60px;">
-
-        <div class="col-8" style="margin-left: 50px;">
-            <div *ngFor="let hub of route.data" style="padding-top:15px;">
-                <h3>{{hub.hubAddress}}</h3>
-                <ul class="list-group">
-                    <li *ngFor="let order of hub.deliveryAddresses"
-                        class="list-group-item d-flex justify-content-between align-items-center">
-                        {{order.orderAddress}} - {{order.distanceFromOrigin}}km
-                        <p>
-                            <span>{{order.fee | currency }}</span>
-                        </p>
-                    </li>
-                </ul>
+<div class="row">
+    <div class="col-7" style="margin-left: 50px;">
+        <div *ngFor="let hub of route.data" style="padding-top:15px;">
+            <h3>{{hub.hubAddress}}</h3>
+            <ul class="list-group">
+                <li *ngFor="let order of hub.deliveryAddresses"
+                    class="list-group-item d-flex justify-content-between align-items-center">
+                    {{order.orderAddress}} - {{order.distanceFromOrigin}}km
+                    <p>
+                        <span>{{order.fee | currency }}</span>
+                    </p>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-4" style="margin-left: 20px;">
+        <div style="padding-top:15px;">
+            <input type="range" class="form-range" min="10" max="40" step="0.3" #ref  (change)="radiusmoved(ref.value)"/>
+            <label for="radius" class="form-label"><span>{{radius}} km</span> search</label>
+            <div style="float: inline;">
+                <button type="button" class="btn btn-outline-primary" (click)="fetchmoreorders()"> Get More Orders </button>
             </div>
         </div>
-
-
-        <div class="col-4" style="margin-left: 50px;">
+    
+        <div *ngIf="showheader" style="margin-top: 10px;">
             <h3>Add More Delivery Locations</h3>
-            <div *ngFor="let order of array; let i = index;" style="padding-top:5px;">
+        </div>
+        <div *ngFor="let order of array; let i = index;" style="padding-top:5px;">
 
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" [value]="i"
-                        (change)="orderpicked($event)">
-                    <label class="form-check-label" for="flexSwitchCheckDefault">{{order.orderAddress}}</label>
-                </div>
-
-            </div>
-            <hr />
-            <div class="form-check form-switch" style=" margin-top:20px;">
-                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" data-bs-toggle="tooltip"
-                    data-bs-placement="auto"
-                    title="Enabling this ensures the routing service respects the endpoint as your destination"
-                    (change)="strictdestination($event)">
-                <label class="form-check-label" for="flexSwitchCheckDefault">Enable Strict Destination</label>
-            </div>
-            <div style="margin-top:20px;">
-                <button type="button" class="btn btn-outline-primary" (click)="vrp()"> Continue to optimal route
-                </button>
-            </div>
-            <div style="margin-top:20px;">
-                <mat-spinner *ngIf="spinnershow"></mat-spinner>
-            </div>
-            <div style="margin-top:20px;">
-                <div *ngIf="spinnershow == false">
-                    <!-- <agm-map [latitude]="51.678418" [longitude]="7.809007"></agm-map> -->
-                    <div *ngIf="apiLoaded | async">
-
-                        <google-map [options]="options">
-                            <map-marker #marker="mapMarker" *ngFor="let markerPosition of markerPositions"
-                                [position]="markerPosition.location" [options]="markerOptions"
-                                (mapClick)="window.open(marker)">
-                                <map-info-window #window="mapInfoWindow">{{ markerPosition.name }}</map-info-window>
-                            </map-marker>
-
-                        </google-map>
-
-                    </div>
-                </div>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" [value]="i"
+                    (change)="orderpicked($event)">
+                <label class="form-check-label" for="flexSwitchCheckDefault">{{order.orderAddress}}</label>
             </div>
 
         </div>
+        <hr />
+        <div class="form-check form-switch" style=" margin-top:20px;">
+            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" data-bs-toggle="tooltip"
+                data-bs-placement="auto"
+                title="Enabling this ensures the routing service respects the endpoint as your destination"
+                (change)="strictdestination($event)">
+            <label class="form-check-label" for="flexSwitchCheckDefault">Enable Strict Destination</label>
+        </div>
+        <div style="margin-top:20px;">
+            <button type="button" class="btn btn-outline-primary" (click)="vrp()"> Continue to optimal route
+            </button>
+        </div>
+        <div style="margin-top:20px;">
+            <mat-spinner *ngIf="spinnershow"></mat-spinner>
+        </div>
+        <div style="margin-top:20px;">
+            <div *ngIf="spinnershow == false">
+                <!-- <agm-map [latitude]="51.678418" [longitude]="7.809007"></agm-map> -->
+                <div *ngIf="apiLoaded | async">
+
+                    <google-map [options]="options">
+                        <map-marker #marker="mapMarker" *ngFor="let markerPosition of markerPositions"
+                            [position]="markerPosition.location" [options]="markerOptions"
+                            (mapClick)="window.open(marker)">
+                            <map-info-window #window="mapInfoWindow">{{ markerPosition.name }}</map-info-window>
+                        </map-marker>
+
+                    </google-map>
+
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>

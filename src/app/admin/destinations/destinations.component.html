@@ -44,14 +44,20 @@
                     <div class="justify-content-center" style="margin-top:2px;">
                         <nav aria-label="Page navigation example">
                             <ul class="pagination justify-content-center">
+                                <li class="page-item">
+                                    <a class="page-link">{{start}}</a>
+                                </li>
                                 <li class="page-item" *ngFor="let orderpicked of waypointarray">
                                     <a class="page-link">{{orderpicked.city}}</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link">{{end}}</a>
                                 </li>
                             </ul>
                         </nav>
                     </div>
                     <div style="margin-top:10px;">
-                        <button type="submit" class="btn btn-outline-primary">Register</button>
+                        <button type="submit" class="btn btn-outline-primary" (click)="saveroute()">Submit !</button>
                     </div>
                     <div class="alert alert-warning" role="alert" *ngIf="iswarning" style="margin: 10px;">
                         {{checkboxdisplay}}

@@ -6,6 +6,9 @@ import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Mapmapper, Markermapper } from 'src/app/models/mapmapper';
 import { MapInfoWindow, MapMarker } from '@angular/google-maps';
+import { StaffService } from 'src/app/ApiRequest/Geobyte/staff.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Deletemarked, Log } from 'src/app/models/hub';
 
 @Component({
     selector: 'app-addmoreorders',
@@ -17,8 +20,91 @@ export class AddmoreordersComponent implements OnInit {
     @ViewChild(MapInfoWindow) infoWindow: MapInfoWindow;
 
     apiLoaded: Observable<boolean>;
+    routeid: any;
+    idsToIgnore = [];
+    showheader: boolean;
+    radius: any = "default";
+    payload: Log;
+    array = [
+        // {
+        //     "id": 6,
+        //     "userName": "user6",
+        //     "latitude": 7.3888316,
+        //     "longitude": 3.8079502,
+        //     "orderAddress": "Ibadan Airport",
+        //     "distanceFromOrigin": 111,
+        //     "fee": 141,
+        //     "hubsVisitedPlusDestination": [
+        //         {
+        //             "latitude": 11.83371,
+        //             "longitude": 13.17719,
+        //             "hubFee": 30
+        //         }
+        //     ]
+        // },
+        // {
+        //     "id": 7,
+        //     "userName": "user7",
+        //     "latitude": 7.4432279,
+        //     "longitude": 3.900116,
+        //     "orderAddress": "University Of Ibadan",
+        //     "distanceFromOrigin": 121,
+        //     "fee": 151,
+        //     "hubsVisitedPlusDestination": [
+        //         {
+        //             "latitude": 11.83371,
+        //             "longitude": 13.17719,
+        //             "hubFee": 30
+        //         }
+        //     ]
+        // },
+        // {
+        //     "id": 33,
+        //     "userName": "user33",
+        //     "latitude": 6.4225471,
+        //     "longitude": 3.5233798,
+        //     "orderAddress": "Alpha Beach",
+        //     "distanceFromOrigin": 21,
+        //     "fee": 51,
+        //     "hubsVisitedPlusDestination": [
+        //         {
+        //             "latitude": 11.83371,
+        //             "longitude": 13.17719,
+        //             "hubFee": 30
+        //         }
+        //     ]
+        // },
+        // {
+        //     "id": 17,
+        //     "userName": "user18",
+        //     "latitude": 13.070884,
+        //     "longitude": 5.42079,
+        //     "orderAddress": "Tunga Mallamawa",
+        //     "distanceFromOrigin": 765,
+        //     "fee": 911,
+        //     "hubsVisitedPlusDestination": [
+        //         {
+        //             "latitude": 8.4992341,
+        //             "longitude": 4.551918,
+        //             "hubFee": 44
+        //         },
+        //         {
+        //             "latitude": 13.0554932,
+        //             "longitude": 5.2403176,
+        //             "hubFee": 72
+        //         },
+        //         {
+        //             "latitude": 11.83371,
+        //             "longitude": 13.17719,
+        //             "hubFee": 30
+        //         }
+        //     ]
+        // }
+    ];
+    markfordelete = [];
+    deletemarked:Deletemarked;
 
-    constructor(private shareddata: ShareddataService, private httpclient: HttpClient) {
+    constructor(private shareddata: ShareddataService, private httpclient: HttpClient, private staff: StaffService, private activatedroute: ActivatedRoute, private router: Router) {
         this.apiLoaded = httpclient.jsonp('https://maps.googleapis.com/maps/api/js?key=AIzaSyCHzzoDlmzdkCUST5doU4GIFVJMXbyEG0U', 'callback')
             .pipe(
                 map(() => true),
@@ -27,9 +113,58 @@ export class AddmoreordersComponent implements OnInit {
     }
     ngOnInit(): void {
         this.route = this.shareddata.data;
+        if (this.route.data === null){
+            this.router.navigateByUrl("/staff/navigateroutes");
+        }
+        this.routeid = this.activatedroute.snapshot.queryParams['routeId']
+        this.idsToIgnore = this.activatedroute.snapshot.queryParams['idsToIgnore']
+        console.log('i log here')
+        console.log(this.routeid);
+        console.log(this.idsToIgnore);
     }
 
-    
+    radiusmoved(km: number) {
+        this.radius = km;
+    }
+
+    async fetchmoreorders() {
+        if(this.radius == "default"){
+            this.radius = 40;
+        }
+        this.array = await this.staff.getAdditionalOrders(this.routeid, this.idsToIgnore, this.radius);
+        this.showheader= true;
+    }
+
+    orderpicked(order: { target: { checked: any; value: any; }; }) {
+        let index = order.target.value;
+        let data = this.array[index];
+        if (order.target.checked) {
+            let order_amount = this.array[index].fee;
+            var order_distance_from_origin = data.distanceFromOrigin;
+            let i = 0;
+            for (const hub of this.route.data) {
+                order_distance_from_origin = order_distance_from_origin + hub.hubFee;
+                if (order_distance_from_origin === order_amount) {
+                    this.route.data[i].deliveryAddresses.push(data);
+                }
+                i++;
+            }
+        }
+        else {
+            let iterator_hub = 0;
+            for (const hub of this.route.data) {
+                let iterator_order = 0;
+                for (const order of hub.deliveryAddresses) {
+                    if (data === order) {
+                        this.route.data[iterator_hub].deliveryAddresses.splice(iterator_order, 1);
+                    }
+                    iterator_order++;
+                }
+                iterator_hub++;
+            }
+        }
+    }
+
 
     deets: any = this.shareddata.data;
     latitude: number = this.deets.data[0].latitude;
@@ -45,7 +180,7 @@ export class AddmoreordersComponent implements OnInit {
     point: google.maps.LatLngLiteral;
     marker: Markermapper;
     markerPositions: Markermapper[] = [];
-    markerOptions: google.maps.MarkerOptions = {draggable: false};
+    markerOptions: google.maps.MarkerOptions = { draggable: false };
 
     mapper: Mapmapper;
     mapdata: Mapmapper[] = [];
@@ -71,84 +206,7 @@ export class AddmoreordersComponent implements OnInit {
     strict_destination: boolean = false;
 
     routific_req: Routificsrequest;
-    array = [
-        {
-            "id": 6,
-            "userName": "user6",
-            "latitude": 7.3888316,
-            "longitude": 3.8079502,
-            "orderAddress": "Ibadan Airport",
-            "distanceFromOrigin": 111,
-            "fee": 141,
-            "hubsVisitedPlusDestination": [
-                {
-                    "latitude": 11.83371,
-                    "longitude": 13.17719,
-                    "hubFee": 30
-                }
-            ]
-        },
-        {
-            "id": 7,
-            "userName": "user7",
-            "latitude": 7.4432279,
-            "longitude": 3.900116,
-            "orderAddress": "University Of Ibadan",
-            "distanceFromOrigin": 121,
-            "fee": 151,
-            "hubsVisitedPlusDestination": [
-                {
-                    "latitude": 11.83371,
-                    "longitude": 13.17719,
-                    "hubFee": 30
-                }
-            ]
-        },
-        {
-            "id": 33,
-            "userName": "user33",
-            "latitude": 6.4225471,
-            "longitude": 3.5233798,
-            "orderAddress": "Alpha Beach",
-            "distanceFromOrigin": 21,
-            "fee": 51,
-            "hubsVisitedPlusDestination": [
-                {
-                    "latitude": 11.83371,
-                    "longitude": 13.17719,
-                    "hubFee": 30
-                }
-            ]
-        },
-        {
-            "id": 17,
-            "userName": "user18",
-            "latitude": 13.070884,
-            "longitude": 5.42079,
-            "orderAddress": "Tunga Mallamawa",
-            "distanceFromOrigin": 765,
-            "fee": 911,
-            "hubsVisitedPlusDestination": [
-                {
-                    "latitude": 8.4992341,
-                    "longitude": 4.551918,
-                    "hubFee": 44
-                },
-                {
-                    "latitude": 13.0554932,
-                    "longitude": 5.2403176,
-                    "hubFee": 72
-                },
-                {
-                    "latitude": 11.83371,
-                    "longitude": 13.17719,
-                    "hubFee": 30
-                }
-            ]
-        }
-    ];
 
-   
 
     strictdestination(strictdestination: { target: { checked: any; value: any; }; }): any {
         if (strictdestination.target.checked) {
@@ -159,6 +217,7 @@ export class AddmoreordersComponent implements OnInit {
         }
 
     }
+
     async vrp() {
         this.spinnershow = true;
 
@@ -246,9 +305,9 @@ export class AddmoreordersComponent implements OnInit {
             fleet: converted_fleet
         }
 
-        // save log(this.route) to db && send(this.route.data) to shared service variable 
+        // save log(this.route) to db  
         // this.shareddata.data = this.route.data
-        // -- TODO: create api method to save log to db
+        // -- TODO: create api method to save log to db && set delete-marker = true
         const url = "https://api.routific.com/v1/vrp";
         let headers = new HttpHeaders();
         let routific_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MGMyNWFlYzZiNDBkZDAwMTdhMWQ5MDAiLCJpYXQiOjE2MjMzNDk5OTZ9.aiIyaszBsiyepRfGufzjZXmy85gKstshlu3qDwJ0evg";
@@ -278,10 +337,13 @@ export class AddmoreordersComponent implements OnInit {
                     isdelivery: true
                 });
             }
+
+
         }
 
         // validate and map routific response
         // use Google routing api and/or markers on plain javascript map 
+        
         for (const point of this.routificresponse.solution.vehicle_1) {
 
             let placename = point.location_name;
@@ -303,9 +365,9 @@ export class AddmoreordersComponent implements OnInit {
 
         this.spinnershow = false;
 
-        this.mapdata.forEach( data => {
+        this.mapdata.forEach(data => {
 
-            this.markerPositions.push( this.marker = {
+            this.markerPositions.push(this.marker = {
                 name: data.name,
                 location: this.point = {
                     lat: data.lat,
@@ -315,43 +377,29 @@ export class AddmoreordersComponent implements OnInit {
             });
         });
 
-        
+        let data = this.route.data;
+        data.forEach(Hub => {
+            Hub.deliveryAddresses.forEach(order => {
+                this.markfordelete.push(order.id);
+            });
+        });
+        // console.log('marked for delete '+this.markfordelete)
+        // console.log('route '+ JSON.stringify(this.route))
+        // console.log('MAP DATA '+ JSON.stringify(this.mapdata))
+       
+        await this.staff.logChosenRoute( this.payload = {
+            log: JSON.stringify(this.route)
+        });
+        await this.staff.markordersfordelete(this.deletemarked = {
+            ids: this.markfordelete
+        });
+
+
     }
 
     openInfoWindow(marker: MapMarker) {
-
         console.log(marker);
         this.infoWindow.open(marker);
-    }
-
-    orderpicked(order: { target: { checked: any; value: any; }; }) {
-        let index = order.target.value;
-        let data = this.array[index];
-        if (order.target.checked) {
-            let order_amount = this.array[index].fee;
-            var order_distance_from_origin = data.distanceFromOrigin;
-            let i = 0;
-            for (const hub of this.route.data) {
-                order_distance_from_origin = order_distance_from_origin + hub.hubFee;
-                if (order_distance_from_origin === order_amount) {
-                    this.route.data[i].deliveryAddresses.push(data);
-                }
-                i++;
-            }
-        }
-        else {
-            let iterator_hub = 0;
-            for (const hub of this.route.data) {
-                let iterator_order = 0;
-                for (const order of hub.deliveryAddresses) {
-                    if (data === order) {
-                        this.route.data[iterator_hub].deliveryAddresses.splice(iterator_order, 1);
-                    }
-                    iterator_order++;
-                }
-                iterator_hub++;
-            }
-        }
     }
 
 }

@@ -10,6 +10,7 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { AdminnavComponent } from './adminnav/adminnav.component';
 import { StaffnavComponent } from './staffnav/staffnav.component';
+import { ResetpasswordComponent } from './resetpassword/resetpassword.component';
 
 
 @NgModule({
@@ -18,6 +19,7 @@ import { StaffnavComponent } from './staffnav/staffnav.component';
     LoginComponent,
     AdminnavComponent,
     StaffnavComponent,
+    ResetpasswordComponent,
   ],
   imports: [
     BrowserModule,
@@ -27,15 +29,17 @@ import { StaffnavComponent } from './staffnav/staffnav.component';
     AppRoutingModule,
     HttpClientModule,
     HttpClientJsonpModule,
-    // // JwtModule.forRoot({
-    // //   config:{
-    // //     tokenGetter:() => {
-    // //         return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MGMyNWFlYzZiNDBkZDAwMTdhMWQ5MDAiLCJpYXQiOjE2MjMzNDk5OTZ9.aiIyaszBsiyepRfGufzjZXmy85gKstshlu3qDwJ0evg";
-    // //     },
-    // //     authScheme: "Bearer ",
-    // //     allowedDomains: ['https://api.routific.com/v1/vrp']
-    // //   }
-    // }),
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: () => {
+          console.log("hi im here")
+          //return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MGMyNWFlYzZiNDBkZDAwMTdhMWQ5MDAiLCJpYXQiOjE2MjMzNDk5OTZ9.aiIyaszBsiyepRfGufzjZXmy85gKstshlu3qDwJ0evg";
+          return localStorage.getItem('key');
+        },
+        authScheme: "Bearer ",
+        allowedDomains: ['http://localhost:8080']
+      }
+    })
   ],
   providers: [],
   bootstrap: [AppComponent]
