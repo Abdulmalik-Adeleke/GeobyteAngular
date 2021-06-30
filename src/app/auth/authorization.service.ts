@@ -9,7 +9,8 @@ export class AuthorizationService {
   constructor(private jwthelper: JwtHelperService) { }
 
   public authorize(iamrole: string): boolean {
-    let jwt = JSON.parse(localStorage.getItem('access-token') || '{}');
+    let jwt = localStorage.getItem('key');
+    console.log('jtw = '+jwt)
     let iam = this.jwthelper.decodeToken(jwt);
     let scope: any = iam.scope;
     if (!this.jwthelper.isTokenExpired(jwt) && scope.name == iamrole) {
