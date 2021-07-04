@@ -310,7 +310,7 @@ export class AddmoreordersComponent implements OnInit {
         // -- TODO: create api method to save log to db && set delete-marker = true
         const url = "https://api.routific.com/v1/vrp";
         let headers = new HttpHeaders();
-        let routific_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MGMyNWFlYzZiNDBkZDAwMTdhMWQ5MDAiLCJpYXQiOjE2MjMzNDk5OTZ9.aiIyaszBsiyepRfGufzjZXmy85gKstshlu3qDwJ0evg";
+        let routific_key = "ROUTIFIC-API-KEY";
         headers = headers.set('Authorization', 'Bearer ' + routific_key);
         try {
             const data = await this.httpclient.post(url, this.routific_req, { headers: headers }).toPromise();
