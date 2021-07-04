@@ -105,7 +105,7 @@ export class AddmoreordersComponent implements OnInit {
     deletemarked:Deletemarked;
 
     constructor(private shareddata: ShareddataService, private httpclient: HttpClient, private staff: StaffService, private activatedroute: ActivatedRoute, private router: Router) {
-        this.apiLoaded = httpclient.jsonp('https://maps.googleapis.com/maps/api/js?key=AIzaSyCHzzoDlmzdkCUST5doU4GIFVJMXbyEG0U', 'callback')
+        this.apiLoaded = httpclient.jsonp('https://maps.googleapis.com/maps/api/js?key=GOOGLE-API-KEY', 'callback')
             .pipe(
                 map(() => true),
                 catchError(() => of(false)),
