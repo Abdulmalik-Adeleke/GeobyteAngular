@@ -10,11 +10,8 @@ export class GoogleService {
 
   constructor(private httpclient: HttpClient) { }
 
-  //   https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,
-  // +Mountain+View,+CA&key=YOUR_API_KEY
-
   async geocode(address: string) : Promise<any>{
-    this.API_KEY ='AIzaSyCHzzoDlmzdkCUST5doU4GIFVJMXbyEG0U'
+    this.API_KEY ='GOOGLE-API-KEY'
     const myObject: any = { address: address, key: this.API_KEY };
     const httpParams: HttpParamsOptions = { fromObject: myObject } as HttpParamsOptions;
     const options = { params: new HttpParams(httpParams)};
